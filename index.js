@@ -1,8 +1,8 @@
 // nombre de la variable igual que el nombre del modulo
 const fs = require('fs');
 const path = require('path');
-const marked = require('marked');
-const fetch = require('node-fetch');
+const marked = require('marked');//libreria
+const fetch = require('node-fetch');//
 
 // Funcion que convierte rutas relativas en absolutas con promesas.
 const pathAbsolute =(route)=>{
@@ -49,7 +49,7 @@ let getLink = (links, file)=> {
     obj = {
       links: href,
       text: text,
-      route: fileName
+      route: file
     };
     //en links voy a empujar mi objeto que estoy mandando traer
     links.push(obj);
@@ -61,7 +61,7 @@ let getLink = (links, file)=> {
 };
 
 //funcion para encontar el url
-const url(array) {
+const newUrl=(array) => {
   //arrego de promesas vacio
   let mypromesas = [];
   array.forEach(function(element, index) {
@@ -89,13 +89,14 @@ Promise.all(mypromesas).then(values => {
 pathAbsolute('./README.md')
   .then(route => readFile(file))
   .then(md => convertMd(md, file))
-  .then(arregloLinks => validateUrl(links))
-  .catch(err => {
-    console.log('Ocurrio un error', err);
+  .then(links => newUrl(links))
+  .catch(error => {
+    console.log('Ocurrio un error', error);
   });
 
 module.exports = {
   pathAbsolute,
   readFile,
-  convertMd
+  convertMd,
+  newUrl
 };
