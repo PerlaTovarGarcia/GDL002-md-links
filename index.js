@@ -21,24 +21,81 @@ const readFile=(file)=>{
       resolve(md,file);
     });
   });
-}
+};
+
 //funcion para convertir los md con marked.
-const convertMd=(md,file){
+const convertMd=(md,file)=>{
     console.log(file);
     return new Promise (function(resolve, reject){
       //hago mi arrego vacio
       const links = [];
-      // Se covierte el archivo md a htm
+      // Se covierte el archivo md a html
       marked(md.toString(), {
       // Se invoca la función que obtiene los links del archivo md
         renderer:getLink(links, file)
       });
       resolve(links);
     })
-}
+};
+//funcion  renderer de los links en marked
+let getLink = (links, file)=> {
+  //objeto vacio
+  let obj = {};
+  //variable de render, se crea con la libreria un modulo render para que me traiga los links
+  let render = new marked.Renderer();
+  //render me traeen un funcion el archivo.. la liga, el titulo y el texto
+  render.link = function(href, title, text) {
+    //se crea un objeto con las caracteristicas que estoy pudiendo
+    obj = {
+      links: href,
+      text: text,
+      route: fileName
+    };
+    //en links voy a empujar mi objeto que estoy mandando traer
+    links.push(obj);
+    //me retorna el objeto
+    return obj;
+  };
+  //me retorna el render final.
+  return render;
+};
 
+//funcion para encontar el url
+const url(array) {
+  //arrego de promesas vacio
+  let mypromesas = [];
+  array.forEach(function(element, index) {
+    mypromesas.push(new Promise((resolve, reject) => {
+      fetch(element.links).then(res => {
+        element.status = res.status;
+        element.statusText = res.statusText;
+        resolve(element);
+      }).catch(err => {
+        element.status = err.code;
+        element.statusText = "fail";
+        resolve(element);
+      });
+    }));
+  });
 
-module.exports = () => {
+Promise.all(mypromesas).then(values => {
+   console.log(values);
+  }).catch(reason => {
+    console.log(reason);
+  });
+
+};
+
+pathAbsolute('./README.md')
+  .then(route => readFile(file))
+  .then(md => convertMd(md, file))
+  .then(arregloLinks => validateUrl(links))
+  .catch(err => {
+    console.log('Ocurrio un error', err);
+  });
+
+module.exports = {
   pathAbsolute,
-  readFile
+  readFile,
+  convertMd
 };
