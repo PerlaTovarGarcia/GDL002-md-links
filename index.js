@@ -9,7 +9,7 @@ const pathAbsolute =(route)=>{
   return new Promise(function(resolve, reject) {
     resolve(file = path.resolve(route));
   });
-}
+};
 
 // Funcion leer archivo md
 const readFile=(file)=>{
@@ -22,7 +22,20 @@ const readFile=(file)=>{
     });
   });
 }
-
+//funcion para convertir los md con marked.
+const convertMd=(md,file){
+    console.log(file);
+    return new Promise (function(resolve, reject){
+      //hago mi arrego vacio
+      const links = [];
+      // Se covierte el archivo md a htm
+      marked(md.toString(), {
+      // Se invoca la función que obtiene los links del archivo md
+        renderer:getLink(links, file)
+      });
+      resolve(links);
+    })
+}
 
 
 module.exports = () => {
