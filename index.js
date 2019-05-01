@@ -1,13 +1,19 @@
 // nombre de la variable igual que el nombre del modulo
-const fs = require('fs');
-const path = require('path');
+const fs = require('fs');//modulo de node para los archivos
+const path = require('path');//Modulo node para checar las rutas.
 const marked = require('marked');//libreria
-const fetch = require('node-fetch');//
+const fetch = require('node-fetch');// Requerir fetch para peticiones a urls
 
-// Funcion que convierte rutas relativas en absolutas con promesas.
-const pathAbsolute =(route)=>{
+// se hace una funcion para buscar la puta del link
+const pathLink =(file)=>{
   return new Promise(function(resolve, reject) {
-    resolve(file = path.resolve(route));
+    //Si la ruta es absoluta
+    if (path.isAbsolute(file)) {
+      reject('No tienes ruta absoluta');
+    }
+    let pathAbsolute = path.resolve(file);
+    //console.log(rutaAbsoluta);
+    return resolve(rutaAbsoluta);
   });
 };
 
@@ -63,9 +69,9 @@ let getLink = (links, file)=> {
 //funcion para encontar el url
 const newUrl=(array) => {
   //arrego de promesas vacio
-  let mypromesas = [];
+  let mypromes = [];
   array.forEach(function(element, index) {
-    mypromesas.push(new Promise((resolve, reject) => {
+    mypromes.push(new Promise((resolve, reject) => {
       fetch(element.links).then(res => {
         element.status = res.status;
         element.statusText = res.statusText;
@@ -86,7 +92,7 @@ Promise.all(mypromesas).then(values => {
 
 };
 
-pathAbsolute('./README.md')
+pathAbsolute('README.md')
   .then(route => readFile(file))
   .then(md => convertMd(md, file))
   .then(links => newUrl(links))
