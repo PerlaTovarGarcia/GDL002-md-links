@@ -3,18 +3,16 @@ const fs = require('fs');//modulo de node para los archivos
 const path = require('path');//Modulo node para checar las rutas.
 const marked = require('marked');//libreria
 const fetch = require('node-fetch');// Requerir fetch para peticiones a urls
+var file = ('./README.md');
+
 
 // se hace una funcion para buscar la puta del link
-const pathLink =(file)=>{
+const pathLink =(route)=>{
+
   return new Promise(function(resolve, reject) {
-    //Si la ruta es absoluta
-    if (path.isAbsolute(file)) {
-      reject('No tienes ruta absoluta');
-    }
-    let pathAbsolute = path.resolve(file);
-    //console.log(rutaAbsoluta);
-    return resolve(rutaAbsoluta);
+    resolve(file = path.resolve(route));
   });
+
 };
 
 // Funcion leer archivo md
@@ -69,22 +67,24 @@ let getLink = (links, file)=> {
 //funcion para encontar el url
 const newUrl=(array) => {
   //arrego de promesas vacio
-  let mypromes = [];
+  let mypromise = [];
+  //se crea un forEach para interar en el array si hay links
   array.forEach(function(element, index) {
-    mypromes.push(new Promise((resolve, reject) => {
+    mypromise.push(new Promise((resolve, reject) => {
+      //se crea el fetch para tener el resultado de links
       fetch(element.links).then(res => {
         element.status = res.status;
         element.statusText = res.statusText;
         resolve(element);
       }).catch(err => {
-        element.status = err.code;
+        element.status = error.code;
         element.statusText = "fail";
         resolve(element);
       });
     }));
   });
-
-Promise.all(mypromesas).then(values => {
+//se cumple cuando todas las promesas del iterable dado se han cumplido, o es rechazada si alguna promesa no se cumple
+Promise.all(mypromise).then(values => {
    console.log(values);
   }).catch(reason => {
     console.log(reason);
@@ -92,16 +92,38 @@ Promise.all(mypromesas).then(values => {
 
 };
 
-pathAbsolute('README.md')
+
+const mdLinks = (file) => {
+
+  const promise = new Promise((resolve, reject) => {
+    if(!file) {
+      return reject(`No se reconoce el archivo ${file}`);
+    }
+    else {
+      return resolve (newUrl(convertMd(file)));
+    }
+  })
+
+
+  promise
+  .then((response) => {
+    return response;
+  })
+  .catch((err) => {
+    console.error(`ERROR: ${err}`);
+  });
+}
+/*pathLink(file)
   .then(route => readFile(file))
   .then(md => convertMd(md, file))
   .then(links => newUrl(links))
   .catch(error => {
     console.log('Ocurrio un error', error);
-  });
+  });*/
 
 module.exports = {
-  pathAbsolute,
+  mdLinks,
+  pathLink,
   readFile,
   convertMd,
   newUrl
