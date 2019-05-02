@@ -1,90 +1,70 @@
-// nombre de la variable igual que el nombre del modulo
-const fs = require('fs');//modulo de node para los archivos
-const path = require('path');//Modulo node para checar las rutas.
-const marked = require('marked');//libreria
-const fetch = require('node-fetch');// Requerir fetch para peticiones a urls
-var file = ('./README.md');
+const fs = require('fs');
+const path = require('path');// nombre de la variable igual que el nombre del modulo
+const marked = require('marked');
+const fetch = require('node-fetch');
 
-
-// se hace una funcion para buscar la puta del link
-const pathLink =(route)=>{
-
+// Funcion que convierte rutas relativas en absolutas
+const pathAbsolute=(route)=> {
   return new Promise(function(resolve, reject) {
-    resolve(file = path.resolve(route));
+    resolve(fileName = path.resolve(route));
   });
-
-};
+}
 
 // Funcion leer archivo md
-const readFile=(file)=>{
-  return new Promise(function (resolve, reject) {
-    fs.readFile(file,function(error,md){
-      if(error){
-        return reject(error);
+const readFile=(fileName)=> {
+  return new Promise(function(resolve, reject) {
+    fs.readFile(fileName, function(err, md) {
+      if (err) {
+        return reject(err);
       }
-      resolve(md,file);
+      resolve(md, fileName);
     });
   });
-};
+}
 
-//funcion para convertir los md con marked.
-const convertMd=(md,file)=>{
-    console.log(file);
-    return new Promise (function(resolve, reject){
-      //hago mi arrego vacio
-      const links = [];
-      // Se covierte el archivo md a html
-      marked(md.toString(), {
-      // Se invoca la función que obtiene los links del archivo md
-        renderer:getLink(links, file)
-      });
-      resolve(links);
-    })
-};
-//funcion  renderer de los links en marked
-let getLink = (links, file)=> {
-  //objeto vacio
+const convertMd=(md, fileName)=> {
+  //console.log(fileName)
+  return new Promise(function(resolve, reject) {
+    const arregloLinks = [];
+    marked(md.toString(), {// Se covierte el archivo md a htm
+      renderer: getLink(arregloLinks, fileName) // Se invoca la función que obtiene los links del archivo md
+    });
+    resolve(arregloLinks);
+  });
+}
+
+const getLink = (arregloLinks, fileName)=> {
   let obj = {};
-  //variable de render, se crea con la libreria un modulo render para que me traiga los links
   let render = new marked.Renderer();
-  //render me traeen un funcion el archivo.. la liga, el titulo y el texto
   render.link = function(href, title, text) {
-    //se crea un objeto con las caracteristicas que estoy pudiendo
     obj = {
       links: href,
       text: text,
-      route: file
+      route: fileName
     };
-    //en links voy a empujar mi objeto que estoy mandando traer
-    links.push(obj);
-    //me retorna el objeto
+    arregloLinks.push(obj);
     return obj;
   };
-  //me retorna el render final.
   return render;
 };
 
-//funcion para encontar el url
-const newUrl=(array) => {
-  //arrego de promesas vacio
-  let mypromise = [];
-  //se crea un forEach para interar en el array si hay links
+const newUrl=(array)=> {
+  let mypromesas = [];
   array.forEach(function(element, index) {
-    mypromise.push(new Promise((resolve, reject) => {
-      //se crea el fetch para tener el resultado de links
+    mypromesas.push(new Promise((resolve, reject) => {
       fetch(element.links).then(res => {
         element.status = res.status;
         element.statusText = res.statusText;
         resolve(element);
       }).catch(err => {
-        element.status = error.code;
+        element.status = err.code;
         element.statusText = "fail";
         resolve(element);
       });
     }));
   });
-//se cumple cuando todas las promesas del iterable dado se han cumplido, o es rechazada si alguna promesa no se cumple
-Promise.all(mypromise).then(values => {
+
+  Promise.all(mypromesas).then(values => {
    console.log(values);
   }).catch(reason => {
     console.log(reason);
@@ -92,38 +72,17 @@ Promise.all(mypromise).then(values => {
 
 };
 
-
-const mdLinks = (file) => {
-
-  const promise = new Promise((resolve, reject) => {
-    if(!file) {
-      return reject(`No se reconoce el archivo ${file}`);
-    }
-    else {
-      return resolve (newUrl(convertMd(file)));
-    }
-  })
-
-
-  promise
-  .then((response) => {
-    return response;
-  })
-  .catch((err) => {
-    console.error(`ERROR: ${err}`);
+pathAbsolute('./README.md')
+  .then(route => readFile(fileName))
+  .then(md => convertMd(md, fileName))
+  .then(arregloLinks => newUrl(arregloLinks))
+  .catch(err => {
+    console.log('Ocurrio un error', err);
   });
-}
-/*pathLink(file)
-  .then(route => readFile(file))
-  .then(md => convertMd(md, file))
-  .then(links => newUrl(links))
-  .catch(error => {
-    console.log('Ocurrio un error', error);
-  });*/
+
 
 module.exports = {
-  mdLinks,
-  pathLink,
+  pathAbsolute,
   readFile,
   convertMd,
   newUrl

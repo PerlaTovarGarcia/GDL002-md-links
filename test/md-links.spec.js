@@ -1,4 +1,4 @@
-const {pathLink, readFile,convertMd} = require('../index.js');
+const {pathAbsolute, readFile,convertMd} = require('../index.js');
 
 describe('pathAbsolute', () => {
   it('shoudl be pathAbsolute a function', () => {
