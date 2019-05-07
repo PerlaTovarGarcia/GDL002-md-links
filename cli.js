@@ -13,7 +13,7 @@ const chalk = require('chalk');
     })
  } else if (oneOption === '--validate' || oneOption === '--v'){
   mdLinks(path, {validate:true})
-  .then(res => { res.forEach( (objLinks) => { console.log(chalk.magenta (`file:  ${objLinks.file}, \nhref: ${objLinks.href}, \nmessage:${objLinks.message},chalk.red \nstatus:${objLinks.status}, \ntext:${objLinks.text}`))})})
+  .then(res => { res.forEach( (objLinks) => { console.log (chalk.magenta (`file:  ${objLinks.file},`) + chalk.cyan( `\nhref: ${objLinks.href},`)+ chalk.yellow (`\nmessage:${objLinks.message},`)+ chalk.red(`\nstatus:${objLinks.status},`)+ chalk.green(`\ntext:${objLinks.text}`))})})
   .catch(error => console.log(error))
  } else if(oneOption === '--stats' || oneOption === '--s'){
   mdLinks(path, {validate:false})
@@ -22,5 +22,5 @@ const chalk = require('chalk');
   })
  } else{
   mdLinks(path, {validate:false})
-  .then(res => { res.forEach( (objLinks) => { console.log(`file: ${objLinks.file}, \nhref: ${objLinks.href}, \ntext:${objLinks.text}`)})})
+  .then(res => { res.forEach( (objLinks) => { console.log(chalk.bgCyan(`file: ${objLinks.file},`)+ chalk.bgCyan(`\nhref: ${objLinks.href},`)+chalk.bgCyan (`\ntext:${objLinks.text}`))})})
  }
