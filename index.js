@@ -131,7 +131,6 @@ const mdLinks = (path, options) => {
      validateLinks,
      statsOfLinks,
      linksBroken,
-     mdLinks,
      mdLinks
    };
 
