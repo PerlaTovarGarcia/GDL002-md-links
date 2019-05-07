@@ -1,42 +1,28 @@
-describe('pathToBeAbsolute', () => {
-    it('deberia retorar true', () => {
-        expect(pathToBeAbsolute('/test/demo_path.js')).toBe(true);
+const {  pathAbsolute, relativePath, pathDirectory, pathFile, fileMD, contentFiles, getLinks, validateLinks, statsOfLinks, linksBroken, mdLinks } = require ('../index.js');
+const {links}= require('../test/pathTest.js')
+describe('pathAbsolute', () => {
+    it('deberia retorar false', () => {
+        expect(pathAbsolute('./test/pathTest.js')).toBe(false);
     });
 });
 
-describe('pathToBeAbsolute', () => {
-    it('deberia retornar false', () => {
-        expect(pathToBeAbsolute('test/demo_path.js')).toBe(false);
-    });
-});
 
-describe('relativeToAbsolute', () => {
+
+describe('relativePath', () => {
     it('deberia retornar ruta absoluta', () => {
-        expect(relativeToAbsolute('test/demo_path.js')).toBe(`${process.cwd()}\\test\\demo_path.js`);
+        expect(relativePath('test/pathTest.js')).toBe(`${process.cwd()}/test/pathTest.js`);
     });
 });
 
-describe('pathIsDirectory', () => {
+describe('pathDirectory', () => {
     it ('deberia retornar true', () => {
-    expect(pathIsDirectory('.\\test')).toBe(true);
+    expect(pathDirectory('./test')).toBe(true);
     });
 });
 
-describe('pathIsFile', () => {
+describe('pathFile', () => {
     it ('deberia retornar true', () => {
-    expect(pathIsFile('test\\prueba.js')).toEqual(true);
-    });
-});
-
-describe('contentFiles', () => {
-    it('debería retornar un array con todas las rutas MD', () => {
-        expect(contentFiles(`${process.cwd()}\\test\\mds`)).toEqual(arrRoutesMD);
-        });
-});
-
-describe('getLinks', () => {
-    it('debería retornar un array de objetos contenniendo: href, text y file', () => {
-    expect(getLinks(arrRoutesMD)).toEqual(objLinks);
+    expect(pathFile('test/prueba.js')).toEqual(true);
     });
 });
 
