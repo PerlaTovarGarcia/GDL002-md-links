@@ -1,31 +1,40 @@
-const fs = require('fs');
+const fs = require('fs');// nombre de la variable igual que el nombre del modulo
 const path = require('path');// nombre de la variable igual que el nombre del modulo
-const marked = require('marked');
-const fetch = require('node-fetch');
+const marked = require('marked');//libreria
+const fetch = require('node-fetch');//para hacer fetch.
 
 //si la ruta es absoluta
-const pathAbsolute = (pathEvalue) => {           //booleano
+const pathAbsolute = (pathEvalue) => { //booleano
+  //me retorna una ruta absoluta
     return path.isAbsolute(pathEvalue)
 };
 //si la ruta es relativa.
 const relativePath = (pathRelative) => {
+  //retorna una ruta relativa
     return path.resolve(pathRelative)
 };
-//evaluar si es un directorio
+//evaluar el directorio
 const pathDirectory = (pathEvalue) => {
+  //retorna el directorio.
     return fs.lstatSync(pathEvalue).isDirectory();
  };
 
+//evalua los archivos.
 const pathFile = (pathEvalue) => {
+  //retorna el archivo para validarlo.
     return fs.lstatSync(pathEvalue).isFile();
  };
 
+//extrae la ruta de archivo.
 const fileMD = (route) => {
+  //retorna la rura estrallendo los .md
     return path.extname(route) === '.md';
  };
-
+//funcion para los archivos
 const contentFiles = (route) => {
+  //creo un array vacio para los .md
     let contentFileMD = [];
+    //si pathFile encuentra los fileMD de una ruta entra al array vacio que se creo
      if (pathFile(route)) {
         if (fileMD(route)){
             contentFileMD.push(route)
@@ -36,9 +45,10 @@ const contentFiles = (route) => {
             contentFileMD = contentFileMD.concat(contentFiles(path.join(route, name)));
         })
      }
+     //retorna mi array
      return contentFileMD;
   };
-
+//funcion de marked
 const getLinks = (arrayRoutesMD) => {
     let arrayObjLinks = [];
     arrayRoutesMD.forEach((routeMD) => {
