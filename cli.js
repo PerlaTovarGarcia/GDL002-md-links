@@ -1,4 +1,5 @@
 const { mdLinks } = require ('./index.js');
+const chalk = require('chalk');
  const path = process.argv[2];
  const oneOption = process.argv[3];
  const twoOption = process.argv[4];
@@ -12,7 +13,7 @@ const { mdLinks } = require ('./index.js');
     })
  } else if (oneOption === '--validate' || oneOption === '--v'){
   mdLinks(path, {validate:true})
-  .then(res => { res.forEach( (objLinks) => { console.log(`file: ${objLinks.file}, \nhref: ${objLinks.href}, \nmessage:${objLinks.message}, \nstatus:${objLinks.status}, \ntext:${objLinks.text}`)})})
+  .then(res => { res.forEach( (objLinks) => { console.log(chalk.magenta (`file:  ${objLinks.file}, \nhref: ${objLinks.href}, \nmessage:${objLinks.message},chalk.red \nstatus:${objLinks.status}, \ntext:${objLinks.text}`))})})
   .catch(error => console.log(error))
  } else if(oneOption === '--stats' || oneOption === '--s'){
   mdLinks(path, {validate:false})
